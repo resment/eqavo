@@ -62,6 +62,10 @@
 - 已完成：项目初始化、独立仓库、品牌第一版、图标生成脚本、翻译脚本骨架、Service 裁剪脚本骨架
 - 进行中：GitHub Actions 发布、Service 实际裁剪验证、中文覆盖率提升
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=resment/eqavo&type=Date)](https://www.star-history.com/#resment/eqavo&Date)
+
 详细任务见：
 
 - [PROJECT_STATUS.md](./PROJECT_STATUS.md)

@@ -62,6 +62,10 @@ Project stage right now:
 - Done: repo bootstrap, independent branding, icon generation pipeline, translation scaffold, service-stripping scaffold
 - In progress: GitHub Actions release flow, actual service stripping validation, better translation coverage
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=resment/eqavo&type=Date)](https://www.star-history.com/#resment/eqavo&Date)
+
 Detailed planning docs:
 
 - [PROJECT_STATUS.md](./PROJECT_STATUS.md)

@@ -27,12 +27,13 @@ if ! cargo -q bundle --help 2>&1 | head -n 1 | grep -q "cargo-bundle v0.6.1-zed"
   cargo install cargo-bundle --git https://github.com/zed-industries/cargo-bundle.git --branch zed-deploy
 fi
 
-script/generate-licenses
+zsh script/generate-licenses
 cargo build --release --package zed --package cli --target "$TARGET_TRIPLE"
 
 APP_PATH="$(cargo bundle --release --target "$TARGET_TRIPLE" --package zed --select-workspace-root | xargs)"
 cp "target/$TARGET_TRIPLE/release/cli" "$APP_PATH/Contents/MacOS/cli"
 cp "crates/zed/resources/Document.icns" "$APP_PATH/Contents/Resources/Document.icns"
+python3 "$ROOT/scripts/verify_release_safety.py" "$APP_PATH"
 
 ARCH_SUFFIX="aarch64"
 if [[ "$TARGET_TRIPLE" == "x86_64-apple-darwin" ]]; then
