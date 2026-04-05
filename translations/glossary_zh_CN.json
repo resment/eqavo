@@ -1,0 +1,17 @@
+{
+  "language": "zh-CN",
+  "terms": {
+    "Settings": "设置",
+    "Extensions": "扩展",
+    "Themes": "主题",
+    "Icon Themes": "图标主题",
+    "Keymap": "键位映射",
+    "Agent": "Agent",
+    "Provider": "提供方",
+    "Providers": "提供方",
+    "Model": "模型",
+    "Models": "模型",
+    "Edit Prediction": "编辑预测",
+    "Sign In": "登录"
+  }
+}

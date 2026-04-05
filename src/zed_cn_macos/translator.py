@@ -44,6 +44,11 @@ def load_strings(path: Path) -> dict[str, str]:
     return data["strings"]
 
 
+def load_glossary(path: Path) -> dict[str, str]:
+    data = json.loads(path.read_text())
+    return data["terms"]
+
+
 def replace_string_literals(content: str, source: str, target: str) -> tuple[str, int]:
     replacements = 0
 
@@ -88,3 +93,10 @@ def translate_tree(source_dir: Path, strings: dict[str, str]) -> TranslationStat
             changed_files += 1
 
     return TranslationStats(changed_files=changed_files, replacements=replacements)
+
+
+def merge_translation_sets(*translation_sets: dict[str, str]) -> dict[str, str]:
+    merged: dict[str, str] = {}
+    for translation_set in translation_sets:
+        merged.update(translation_set)
+    return merged

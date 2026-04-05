@@ -26,6 +26,7 @@ Build an unofficial, macOS-first, Chinese-localized editor distribution based on
 - Renamed the local project folder to `eqavo`
 - Added project scaffold for syncing Zed source and applying translations
 - Added initial structured translation file
+- Added a dedicated Chinese glossary layer for reusable product terminology
 - Added first-pass logo and app icon SVG assets
 - Added generated macOS iconset and `.icns` assets
 - Added initial service-stripping script

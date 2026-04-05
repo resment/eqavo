@@ -10,13 +10,15 @@ SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 from zed_cn_macos.config import load_paths
-from zed_cn_macos.translator import load_strings, translate_tree
+from zed_cn_macos.translator import load_glossary, load_strings, merge_translation_sets, translate_tree
 
 
 def main() -> int:
     paths = load_paths(ROOT)
+    glossary = load_glossary(paths.glossary_file)
     strings = load_strings(paths.translations_file)
-    stats = translate_tree(paths.source_dir, strings)
+    translations = merge_translation_sets(glossary, strings)
+    stats = translate_tree(paths.source_dir, translations)
 
     print(f"Changed files: {stats.changed_files}")
     print(f"Total replacements: {stats.replacements}")

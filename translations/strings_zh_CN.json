@@ -1,9 +1,6 @@
 {
   "language": "zh-CN",
   "strings": {
-    "Sign In": "登录",
-    "Settings": "设置",
-    "Extensions": "扩展",
     "Open Application Menu": "打开应用菜单",
     "Disconnected": "已断开连接",
     "Selection Controls": "选择控制",
