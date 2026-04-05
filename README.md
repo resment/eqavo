@@ -27,7 +27,6 @@
 
 - 让 macOS 用户获得一个更完整的中文化编辑器体验
 - 尽量降低终端用户使用门槛
-- 使用独立品牌，避免与 Zed 官方品牌混淆
 - 尽量裁掉不必要的官方 Service 依赖，走本地优先路线
 
 理想中的用户流程是：
@@ -45,22 +44,6 @@
 - 语言：中文优先，英文补充
 - 收费：免费
 - 仓库：独立维护
-
-## 增长情况
-
-这里不手写静态数字，而是默认挂 GitHub 的实时指标：
-
-- Star、Fork、Issue、最近提交：见页面顶部徽章
-- 后续可增加：
-  - Release 下载量
-  - 构建成功率
-  - 中文覆盖率
-  - 版本同步速度
-
-当前项目阶段：
-
-- 已完成：项目初始化、独立仓库、品牌第一版、图标生成脚本、翻译脚本骨架、Service 裁剪脚本骨架
-- 进行中：GitHub Actions 发布、Service 实际裁剪验证、中文覆盖率提升
 
 ## Star History
 
@@ -113,55 +96,10 @@ eqavo/
   translations/
 ```
 
-## 本地开发
-
-初始化环境：
-
-```bash
-./scripts/bootstrap.sh
-```
-
-同步上游源码：
-
-```bash
-python3 scripts/sync_zed.py
-```
-
-应用汉化：
-
-```bash
-python3 scripts/apply_translations.py
-```
-
-裁剪官方 Service：
-
-```bash
-python3 scripts/disable_services.py
-```
-
-应用 Eqavo 品牌：
-
-```bash
-python3 scripts/apply_branding.py
-```
-
-生成图标资源：
-
-```bash
-python3 scripts/generate_icons.py
-```
-
-打包 macOS 构建：
-
-```bash
-./scripts/package_macos.sh aarch64-apple-darwin
-```
-
 ## 合规说明
 
 - `Eqavo` 是独立社区品牌
 - 本项目不隶属于 Zed Industries，也不代表官方立场
-- 应避免使用 Zed 官方 logo、图标和官方品牌表述
 - 发布与维护应遵守上游开源许可和相关品牌规则
 
 ## 路线图
