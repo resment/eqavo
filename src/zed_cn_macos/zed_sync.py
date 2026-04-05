@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import zipfile
 from pathlib import Path
@@ -10,8 +11,23 @@ import requests
 REPO = "zed-industries/zed"
 
 
+def github_headers() -> dict[str, str]:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "eqavo-build",
+    }
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
 def fetch_latest_release() -> dict:
-    response = requests.get(f"https://api.github.com/repos/{REPO}/releases", timeout=30)
+    response = requests.get(
+        f"https://api.github.com/repos/{REPO}/releases",
+        timeout=30,
+        headers=github_headers(),
+    )
     response.raise_for_status()
     releases = response.json()
     stable = [release for release in releases if not release.get("prerelease")]
@@ -22,7 +38,7 @@ def fetch_latest_release() -> dict:
 
 def download_source(zip_url: str, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
-    with requests.get(zip_url, timeout=60, stream=True) as response:
+    with requests.get(zip_url, timeout=60, stream=True, headers=github_headers()) as response:
         response.raise_for_status()
         with destination.open("wb") as output:
             for chunk in response.iter_content(chunk_size=8192):
