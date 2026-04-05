@@ -14,7 +14,9 @@ from zed_cn_macos.config import load_paths
 
 def replace_exact(path: Path, old: str, new: str) -> None:
     content = path.read_text()
-    if new in content:
+    if new and new in content:
+        return
+    if not new and old not in content:
         return
     if old not in content:
         raise RuntimeError(f"Expected snippet not found in {path}")
@@ -39,6 +41,26 @@ def main() -> int:
     main_rs = paths.source_dir / "crates" / "zed" / "src" / "main.rs"
     zed_rs = paths.source_dir / "crates" / "zed" / "src" / "zed.rs"
     title_bar_rs = paths.source_dir / "crates" / "title_bar" / "src" / "title_bar.rs"
+    language_models_rs = paths.source_dir / "crates" / "language_models" / "src" / "language_models.rs"
+    agent_panel_onboarding_rs = (
+        paths.source_dir / "crates" / "ai_onboarding" / "src" / "agent_panel_onboarding_content.rs"
+    )
+    edit_prediction_onboarding_rs = (
+        paths.source_dir / "crates" / "ai_onboarding" / "src" / "edit_prediction_onboarding_content.rs"
+    )
+    agent_panel_rs = paths.source_dir / "crates" / "agent_ui" / "src" / "agent_panel.rs"
+    thread_view_rs = (
+        paths.source_dir / "crates" / "agent_ui" / "src" / "conversation_view" / "thread_view.rs"
+    )
+    text_thread_editor_rs = (
+        paths.source_dir / "crates" / "agent_ui" / "src" / "text_thread_editor.rs"
+    )
+    edit_prediction_button_rs = (
+        paths.source_dir / "crates" / "edit_prediction_ui" / "src" / "edit_prediction_button.rs"
+    )
+    edit_prediction_registry_rs = (
+        paths.source_dir / "crates" / "zed" / "src" / "zed" / "edit_prediction_registry.rs"
+    )
 
     replace_exact(
         main_rs,
@@ -207,6 +229,333 @@ def main() -> int:
                 })
                 .into()
             })
+""",
+    )
+
+    replace_exact(
+        language_models_rs,
+        "use crate::provider::cloud::CloudLanguageModelProvider;\n",
+        "",
+    )
+
+    replace_exact(
+        language_models_rs,
+        """    registry.register_provider(
+        Arc::new(CloudLanguageModelProvider::new(
+            user_store,
+            client.clone(),
+            cx,
+        )),
+        cx,
+    );
+""",
+        """    let _ = user_store;
+""",
+    )
+
+    replace_exact(
+        agent_panel_onboarding_rs,
+        """impl Render for AgentPanelOnboarding {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let enrolled_in_trial = self
+            .user_store
+            .read(cx)
+            .plan()
+            .is_some_and(|plan| plan == Plan::ZedProTrial);
+        let is_pro_user = self
+            .user_store
+            .read(cx)
+            .plan()
+            .is_some_and(|plan| plan == Plan::ZedPro);
+
+        AgentPanelOnboardingCard::new()
+            .child(
+                ZedAiOnboarding::new(
+                    self.client.clone(),
+                    &self.user_store,
+                    self.continue_with_zed_ai.clone(),
+                    cx,
+                )
+                .with_dismiss({
+                    let callback = self.continue_with_zed_ai.clone();
+                    move |window, cx| callback(window, cx)
+                }),
+            )
+            .map(|this| {
+                if enrolled_in_trial || is_pro_user || self.has_configured_providers {
+                    this
+                } else {
+                    this.child(ApiKeysWithoutProviders::new())
+                }
+            })
+    }
+}
+""",
+        """impl Render for AgentPanelOnboarding {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        AgentPanelOnboardingCard::new().child(ApiKeysWithoutProviders::new())
+    }
+}
+""",
+    )
+
+    replace_exact(
+        edit_prediction_onboarding_rs,
+        """use client::{Client, UserStore};
+use cloud_api_types::Plan;
+use gpui::{Entity, IntoElement, ParentElement};
+use ui::prelude::*;
+
+use crate::ZedAiOnboarding;
+""",
+        """use client::{Client, UserStore};
+use cloud_api_types::Plan;
+use gpui::{Entity, IntoElement, ParentElement};
+use ui::prelude::*;
+""",
+    )
+
+    replace_exact(
+        edit_prediction_onboarding_rs,
+        """impl Render for EditPredictionOnboarding {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let is_free_plan = self
+            .user_store
+            .read(cx)
+            .plan()
+            .is_some_and(|plan| plan == Plan::ZedFree);
+
+        let github_copilot = v_flex()
+            .gap_1()
+            .child(Label::new(if self.copilot_is_configured {
+                "Alternatively, you can continue to use GitHub Copilot as that's already set up."
+            } else {
+                "Alternatively, you can use GitHub Copilot as your edit prediction provider."
+            }))
+            .child(
+                Button::new(
+                    "configure-copilot",
+                    if self.copilot_is_configured {
+                        "Use Copilot"
+                    } else {
+                        "Configure Copilot"
+                    },
+                )
+                .full_width()
+                .style(ButtonStyle::Outlined)
+                .on_click({
+                    let callback = self.continue_with_copilot.clone();
+                    move |_, window, cx| callback(window, cx)
+                }),
+            );
+
+        v_flex()
+            .gap_2()
+            .child(ZedAiOnboarding::new(
+                self.client.clone(),
+                &self.user_store,
+                self.continue_with_zed_ai.clone(),
+                cx,
+            ))
+            .when(is_free_plan, |this| {
+                this.child(ui::Divider::horizontal()).child(github_copilot)
+            })
+    }
+}
+""",
+        """impl Render for EditPredictionOnboarding {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let is_free_plan = self
+            .user_store
+            .read(cx)
+            .plan()
+            .is_some_and(|plan| plan == Plan::ZedFree);
+
+        let github_copilot = v_flex()
+            .gap_1()
+            .child(Label::new(if self.copilot_is_configured {
+                "Alternatively, you can continue to use GitHub Copilot as that's already set up."
+            } else {
+                "Alternatively, you can use GitHub Copilot as your edit prediction provider."
+            }))
+            .child(
+                Button::new(
+                    "configure-copilot",
+                    if self.copilot_is_configured {
+                        "Use Copilot"
+                    } else {
+                        "Configure Copilot"
+                    },
+                )
+                .full_width()
+                .style(ButtonStyle::Outlined)
+                .on_click({
+                    let callback = self.continue_with_copilot.clone();
+                    move |_, window, cx| callback(window, cx)
+                }),
+            );
+
+        v_flex()
+            .gap_2()
+            .child(
+                Label::new(
+                    "Eqavo does not include Zed AI. Configure your own edit prediction provider instead.",
+                )
+                .color(Color::Muted),
+            )
+            .when(is_free_plan, |this| this.child(ui::Divider::horizontal()).child(github_copilot))
+    }
+}
+""",
+    )
+
+    replace_between(
+        agent_panel_rs,
+        "        let zed_provider_configured = AgentSettings::get_global(cx)\n",
+        "        match configuration_error {\n",
+        """        let zed_provider_configured = AgentSettings::get_global(cx)
+            .default_model
+            .as_ref()
+            .is_some_and(|selection| selection.provider.0.as_str() == "zed.dev");
+
+        let callout = if zed_provider_configured {
+            Callout::new()
+                .icon(IconName::Warning)
+                .severity(Severity::Warning)
+                .when(border_bottom, |this| {
+                    this.border_position(ui::BorderPosition::Bottom)
+                })
+                .title("Eqavo does not include Zed AI.")
+                .description("Select another model provider in the configuration panel.")
+                .actions_slot(
+                    Button::new("settings", "Configure")
+                        .style(ButtonStyle::Tinted(ui::TintColor::Warning))
+                        .label_size(LabelSize::Small)
+                        .key_binding(
+                            KeyBinding::for_action_in(&OpenSettings, focus_handle, cx)
+                                .map(|kb| kb.size(rems_from_px(12.))),
+                        )
+                        .on_click(|_event, window, cx| {
+                            window.dispatch_action(OpenSettings.boxed_clone(), cx)
+                        }),
+                )
+        } else {
+            Callout::new()
+                .icon(IconName::Warning)
+                .severity(Severity::Warning)
+                .when(border_bottom, |this| {
+                    this.border_position(ui::BorderPosition::Bottom)
+                })
+                .title(configuration_error.to_string())
+                .actions_slot(
+                    Button::new("settings", "Configure")
+                        .style(ButtonStyle::Tinted(ui::TintColor::Warning))
+                        .label_size(LabelSize::Small)
+                        .key_binding(
+                            KeyBinding::for_action_in(&OpenSettings, focus_handle, cx)
+                                .map(|kb| kb.size(rems_from_px(12.))),
+                        )
+                        .on_click(|_event, window, cx| {
+                            window.dispatch_action(OpenSettings.boxed_clone(), cx)
+                        }),
+                )
+        };
+""",
+    )
+
+    replace_between(
+        thread_view_rs,
+        "    fn render_payment_required_error(&self, cx: &mut Context<Self>) -> Callout {\n",
+        "    fn authenticate_button(&self, cx: &mut Context<Self>) -> impl IntoElement {\n",
+        """    fn render_payment_required_error(&self, cx: &mut Context<Self>) -> Callout {
+        const ERROR_MESSAGE: &str =
+            "Eqavo does not include Zed AI billing. Choose another provider to continue.";
+
+        Callout::new()
+            .severity(Severity::Error)
+            .icon(IconName::XCircle)
+            .title("Provider Unavailable")
+            .description(ERROR_MESSAGE)
+            .actions_slot(h_flex().gap_0p5().child(self.create_copy_button(ERROR_MESSAGE)))
+            .dismiss_action(self.dismiss_error_button(cx))
+    }
+
+    fn upgrade_button(&self, _cx: &mut Context<Self>) -> impl IntoElement {
+        Button::new("upgrade_disabled", "Unavailable")
+            .label_size(LabelSize::Small)
+            .disabled(true)
+    }
+
+""",
+    )
+
+    replace_between(
+        text_thread_editor_rs,
+        '    fn render_payment_required_error(&self, cx: &mut Context<Self>) -> AnyElement {\n',
+        "    fn render_assist_error(\n",
+        """    fn render_payment_required_error(&self, cx: &mut Context<Self>) -> AnyElement {
+        const ERROR_MESSAGE: &str =
+            "Eqavo does not include Zed AI billing. Choose another provider to continue.";
+
+        v_flex()
+            .gap_0p5()
+            .child(
+                h_flex()
+                    .gap_1p5()
+                    .items_center()
+                    .child(Icon::new(IconName::XCircle).color(Color::Error))
+                    .child(Label::new("Provider Unavailable").weight(FontWeight::MEDIUM)),
+            )
+            .child(
+                div()
+                    .id("error-message")
+                    .max_h_24()
+                    .overflow_y_scroll()
+                    .child(Label::new(ERROR_MESSAGE)),
+            )
+            .child(
+                h_flex()
+                    .justify_end()
+                    .mt_1()
+                    .child(Button::new("dismiss", "Dismiss").on_click(cx.listener(
+                        |this, _, _window, cx| {
+                            this.last_error = None;
+                            cx.notify();
+                        },
+                    ))),
+            )
+            .into_any()
+    }
+""",
+    )
+
+    replace_exact(
+        edit_prediction_button_rs,
+        "    providers.push(EditPredictionProvider::Zed);\n",
+        "    // Eqavo does not expose the upstream Zed AI edit prediction provider.\n",
+    )
+
+    replace_exact(
+        edit_prediction_button_rs,
+        """            .separator()
+            .entry("Use Zed AI", None, {
+                let fs = fs.clone();
+                move |_window, cx| {
+                    set_completion_provider(fs.clone(), cx, EditPredictionProvider::Zed)
+                }
+            })
+""",
+        """            .separator()
+""",
+    )
+
+    replace_exact(
+        edit_prediction_registry_rs,
+        """        EditPredictionProvider::Zed => {
+            Some(EditPredictionProviderConfig::Zed(EditPredictionModel::Zeta))
+        }
+""",
+        """        EditPredictionProvider::Zed => None,
 """,
     )
 
