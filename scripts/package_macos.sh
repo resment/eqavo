@@ -9,7 +9,9 @@ TARGET_TRIPLE="${1:-aarch64-apple-darwin}"
 source .venv/bin/activate
 
 python3 scripts/generate_icons.py
-python3 scripts/sync_zed.py
+if [[ "${EQAVO_SKIP_SYNC:-0}" != "1" ]]; then
+  python3 scripts/sync_zed.py
+fi
 python3 scripts/apply_translations.py
 python3 scripts/disable_services.py
 python3 scripts/apply_branding.py

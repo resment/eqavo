@@ -99,6 +99,14 @@ def main() -> int:
     )
 
     replace_exact(
+        main_rs,
+        """        telemetry.flush_events().detach();
+""",
+        """        // Eqavo disables upstream telemetry flushing.
+""",
+    )
+
+    replace_exact(
         zed_rs,
         """        let channels_panel =
             collab_ui::collab_panel::CollabPanel::load(workspace_handle.clone(), cx.clone());
