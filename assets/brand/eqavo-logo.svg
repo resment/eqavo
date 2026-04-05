@@ -1,0 +1,18 @@
+<svg width="960" height="320" viewBox="0 0 960 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="320" rx="36" fill="#091419"/>
+  <rect x="54" y="54" width="212" height="212" rx="48" fill="url(#iconBg)"/>
+  <rect x="92" y="92" width="136" height="136" rx="30" stroke="#78E7FF" stroke-width="14"/>
+  <path d="M185 120H126V200H185" stroke="#78E7FF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M126 160H173" stroke="#78E7FF" stroke-width="18" stroke-linecap="round"/>
+  <path d="M327 116H360.48L421.845 204.935H424.57V116H451.91V252H418.593L357.145 163.114H354.503V252H327V116Z" fill="#F5FBFF"/>
+  <path d="M471.659 252V116H558.09V139.199H499.157V173.62H553.917V196.818H499.157V228.801H558.335V252H471.659Z" fill="#F5FBFF"/>
+  <path d="M643.119 252H614.094L567.801 116H598.011L628.36 214.675H629.583L659.851 116H690.142L643.119 252Z" fill="#F5FBFF"/>
+  <path d="M693.975 184C693.975 141.874 719.247 113.922 757.248 113.922C795.25 113.922 820.521 141.874 820.521 184C820.521 226.126 795.25 254.078 757.248 254.078C719.247 254.078 693.975 226.126 693.975 184ZM792.534 184C792.534 155.965 779.627 137.936 757.248 137.936C734.869 137.936 721.963 155.965 721.963 184C721.963 212.035 734.869 230.064 757.248 230.064C779.627 230.064 792.534 212.035 792.534 184Z" fill="#F5FBFF"/>
+  <path d="M829.296 116H859.751L892.415 219.82H893.72L926.384 116H956.838L910.219 252H875.915L829.296 116Z" fill="#F5FBFF"/>
+  <defs>
+    <linearGradient id="iconBg" x1="78" y1="66" x2="241" y2="254" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10303A"/>
+      <stop offset="1" stop-color="#0A171D"/>
+    </linearGradient>
+  </defs>
+</svg>

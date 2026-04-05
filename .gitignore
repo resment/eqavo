@@ -1,0 +1,10 @@
+.DS_Store
+.venv/
+.workdir/
+__pycache__/
+*.pyc
+
+# Optional local renders and packaging outputs
+assets/brand/render/
+dist/
+build/

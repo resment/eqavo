@@ -1,0 +1,17 @@
+{
+  "language": "zh-CN",
+  "strings": {
+    "Sign In": "登录",
+    "Settings": "设置",
+    "Extensions": "扩展",
+    "Open Application Menu": "打开应用菜单",
+    "Disconnected": "已断开连接",
+    "Selection Controls": "选择控制",
+    "Editor Controls": "编辑器控制",
+    "Paste a URL to open.": "粘贴要打开的 URL。",
+    "Clear Events": "清除事件",
+    "Open Raw Log File": "打开原始日志文件",
+    "Output Device": "输出设备",
+    "Input Device": "输入设备"
+  }
+}
