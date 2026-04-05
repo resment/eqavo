@@ -1,150 +1,171 @@
 # Eqavo
 
-`Eqavo` is an unofficial macOS-first Chinese localization project based on Zed source code.
+<p align="center">
+  <img src="./assets/brand/eqavo-logo.svg" alt="Eqavo logo" width="720" />
+</p>
 
-The goal is simple:
+<p align="center">
+  <img src="./assets/brand/eqavo-icon.svg" alt="Eqavo icon" width="128" />
+</p>
 
-- End users should not compile anything.
-- Maintainers should be able to sync a new Zed release quickly.
-- The project should produce a signed-or-unsigned `.app` / `.dmg` artifact that Mac users can open directly.
+<p align="center">
+  中文 | <a href="./README_EN.md">English</a>
+</p>
 
-## User experience
+<p align="center">
+  <a href="https://github.com/resment/eqavo/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/resment/eqavo?style=flat-square" /></a>
+  <a href="https://github.com/resment/eqavo/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/resment/eqavo?style=flat-square" /></a>
+  <a href="https://github.com/resment/eqavo/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/resment/eqavo?style=flat-square" /></a>
+  <a href="https://github.com/resment/eqavo/commits/main"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/resment/eqavo?style=flat-square" /></a>
+</p>
 
-The ideal user flow is:
+> 一个非官方、面向 macOS、中文优先、基于 Zed 源码构建的独立发行项目。
 
-1. Open the latest GitHub Release.
-2. Download `Eqavo-AppleSilicon.dmg` or `Eqavo-Intel.dmg`.
-3. Drag `Eqavo.app` into `Applications`.
-4. Open and use it.
+## 产品介绍
 
-For advanced users we also keep a local build path:
+`Eqavo` 的目标很直接：
 
-```bash
-./scripts/bootstrap.sh
-./scripts/build_local.sh
-```
+- 让 macOS 用户获得一个更完整的中文化编辑器体验
+- 尽量降低终端用户使用门槛
+- 使用独立品牌，避免与 Zed 官方品牌混淆
+- 尽量裁掉不必要的官方 Service 依赖，走本地优先路线
 
-## Why this project exists
+理想中的用户流程是：
 
-The existing community translation project has two main problems for macOS:
+1. 打开 GitHub Releases
+2. 下载适合自己机器的 macOS 安装包
+3. 拖到 `Applications`
+4. 打开即用
 
-1. It is Linux-first.
-2. Its translation targets are tied to old file paths, so coverage drops as Zed evolves.
+## 当前定位
 
-Eqavo is macOS-only on purpose. We optimize for:
+- 产品名：`Eqavo`
+- 性质：非官方社区项目
+- 平台：macOS 优先
+- 语言：中文优先，英文补充
+- 收费：免费
+- 仓库：独立维护
 
-- current Zed source layout
-- macOS build tooling
-- simple release artifacts
-- easier translation maintenance
+## 增长情况
 
-## Recommended architecture
+这里不手写静态数字，而是默认挂 GitHub 的实时指标：
 
-### For users
+- Star、Fork、Issue、最近提交：见页面顶部徽章
+- 后续可增加：
+  - Release 下载量
+  - 构建成功率
+  - 中文覆盖率
+  - 版本同步速度
 
-- Download prebuilt macOS releases.
-- Do not run Python, Rust, or build scripts locally unless they want to contribute.
+当前项目阶段：
 
-### For maintainers
+- 已完成：项目初始化、独立仓库、品牌第一版、图标生成脚本、翻译脚本骨架、Service 裁剪脚本骨架
+- 进行中：GitHub Actions 发布、Service 实际裁剪验证、中文覆盖率提升
 
-- Sync the latest Zed version.
-- Apply a translation overlay from `translations/`.
-- Build on GitHub Actions macOS runners.
-- Publish `.app` and `.dmg` artifacts.
+详细任务见：
 
-## Project layout
+- [PROJECT_STATUS.md](./PROJECT_STATUS.md)
+
+## 这个项目解决什么问题
+
+现有社区方案对 macOS 不够友好，主要问题是：
+
+- 以 Linux 构建流程为中心
+- 对新版 Zed 源码结构适配不足
+- 用户操作步骤太多
+- 品牌和分发方式不够独立
+
+Eqavo 选择的路线是：
+
+1. 同步上游 Zed 源码
+2. 应用结构化中文翻译
+3. 裁剪不需要的官方 Service 相关入口
+4. 构建 macOS 可分发产物
+5. 发布独立品牌的安装包
+
+## 仓库结构
 
 ```text
 eqavo/
   README.md
-  BRANDING.md
+  README_EN.md
+  PROJECT_STATUS.md
   assets/
     brand/
-      eqavo-logo.svg
-      eqavo-icon.svg
-  pyproject.toml
-  translations/
-    strings_zh_CN.json
   scripts/
     bootstrap.sh
-    build_local.sh
     sync_zed.py
     apply_translations.py
     disable_services.py
-  src/zed_cn_macos/
-    __init__.py
-    config.py
-    zed_sync.py
-    translator.py
+    apply_branding.py
+    generate_icons.py
+    package_macos.sh
+  src/
+  translations/
 ```
 
-## Current strategy
+## 本地开发
 
-We keep the source-based approach, but make it maintainable:
-
-1. Download a specific Zed release source snapshot.
-2. Apply translation replacements from a structured dictionary.
-3. Support per-file replacement rules for unstable UI code.
-4. Build macOS binaries.
-5. Package the result for end users.
-
-## Better than the old approach
-
-- macOS paths are first-class
-- no hardcoded author machine paths
-- no proxy assumptions
-- no Linux-only build script dependency
-- translation data is separated from build logic
-- local build and CI build use the same scripts
-
-## Branding
-
-- `Eqavo` is a separate community brand.
-- It is not affiliated with or endorsed by Zed Industries.
-- We should avoid using Zed's official logo, app icon, or branding assets.
-
-Brand assets for this project live in:
-
-- [BRANDING.md](/Users/resment/Documents/New%20project/zed-cn-macos/BRANDING.md)
-- [eqavo-logo.svg](/Users/resment/Documents/New%20project/zed-cn-macos/assets/brand/eqavo-logo.svg)
-- [eqavo-icon.svg](/Users/resment/Documents/New%20project/zed-cn-macos/assets/brand/eqavo-icon.svg)
-
-## Local development
-
-Bootstrap:
+初始化环境：
 
 ```bash
 ./scripts/bootstrap.sh
 ```
 
-Sync the latest stable Zed release source:
+同步上游源码：
 
 ```bash
 python3 scripts/sync_zed.py
 ```
 
-Apply translations:
+应用汉化：
 
 ```bash
 python3 scripts/apply_translations.py
 ```
 
-Disable upstream service-connected features:
+裁剪官方 Service：
 
 ```bash
 python3 scripts/disable_services.py
 ```
 
-Build locally:
+应用 Eqavo 品牌：
 
 ```bash
-./scripts/build_local.sh
+python3 scripts/apply_branding.py
 ```
 
-## Long-term roadmap
+生成图标资源：
 
-- Add GitHub Actions for macOS release builds
-- Add automatic diff checks when new Zed versions move UI files
-- Add more structured translation coverage reports
-- Package as signed `.dmg` if signing resources are available
-- Optionally add a tiny installer app that downloads the latest translated build
+```bash
+python3 scripts/generate_icons.py
+```
+
+打包 macOS 构建：
+
+```bash
+./scripts/package_macos.sh aarch64-apple-darwin
+```
+
+## 合规说明
+
+- `Eqavo` 是独立社区品牌
+- 本项目不隶属于 Zed Industries，也不代表官方立场
+- 应避免使用 Zed 官方 logo、图标和官方品牌表述
+- 发布与维护应遵守上游开源许可和相关品牌规则
+
+## 路线图
+
+近期优先级：
+
+1. 做出可自动构建的 `.app` / `.dmg`
+2. 落地 GitHub Actions 发布流程
+3. 扩展新版 Zed 的中文覆盖
+4. 进一步屏蔽登录、协作、遥测、自动更新等官方 Service 入口
+
+## English
+
+For the English version of this README, see:
+
+- [README_EN.md](./README_EN.md)

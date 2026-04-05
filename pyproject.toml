@@ -1,12 +1,12 @@
 [project]
-name = "zed-cn-macos"
+name = "eqavo"
 version = "0.1.0"
 description = "macOS-first Chinese localization tooling for Zed"
 requires-python = ">=3.11"
 dependencies = [
+  "Pillow>=11.0.0",
   "requests>=2.32.0",
 ]
 
 [tool.ruff]
 line-length = 100
-

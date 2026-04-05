@@ -14,6 +14,8 @@ from zed_cn_macos.config import load_paths
 
 def replace_exact(path: Path, old: str, new: str) -> None:
     content = path.read_text()
+    if new in content:
+        return
     if old not in content:
         raise RuntimeError(f"Expected snippet not found in {path}")
     path.write_text(content.replace(old, new, 1))

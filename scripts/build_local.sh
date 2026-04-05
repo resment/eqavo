@@ -9,6 +9,7 @@ source .venv/bin/activate
 python3 scripts/sync_zed.py
 python3 scripts/apply_translations.py
 python3 scripts/disable_services.py
+python3 scripts/apply_branding.py
 
 cd "$ROOT/.workdir/zed-src"
 source "$HOME/.cargo/env"

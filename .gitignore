@@ -3,6 +3,7 @@
 .workdir/
 __pycache__/
 *.pyc
+*.egg-info/
 
 # Optional local renders and packaging outputs
 assets/brand/render/
