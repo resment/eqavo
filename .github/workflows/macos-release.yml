@@ -22,9 +22,6 @@ jobs:
           - runner: macos-14
             target: aarch64-apple-darwin
             artifact_name: Eqavo-aarch64.dmg
-          - runner: macos-13
-            target: x86_64-apple-darwin
-            artifact_name: Eqavo-x86_64.dmg
 
     runs-on: ${{ matrix.runner }}
 
