@@ -21,10 +21,24 @@ def replace_exact(path: Path, old: str, new: str) -> None:
     path.write_text(content.replace(old, new, 1))
 
 
+def replace_between(path: Path, start_marker: str, end_marker: str, replacement: str) -> None:
+    content = path.read_text()
+    if replacement in content:
+        return
+    start = content.find(start_marker)
+    if start == -1:
+        raise RuntimeError(f"Start marker not found in {path}: {start_marker}")
+    end = content.find(end_marker, start)
+    if end == -1:
+        raise RuntimeError(f"End marker not found in {path}: {end_marker}")
+    path.write_text(content[:start] + replacement + content[end:])
+
+
 def main() -> int:
     paths = load_paths(ROOT)
     main_rs = paths.source_dir / "crates" / "zed" / "src" / "main.rs"
     zed_rs = paths.source_dir / "crates" / "zed" / "src" / "zed.rs"
+    title_bar_rs = paths.source_dir / "crates" / "title_bar" / "src" / "title_bar.rs"
 
     replace_exact(
         main_rs,
@@ -107,6 +121,18 @@ def main() -> int:
     )
 
     replace_exact(
+        main_rs,
+        """        cx.spawn({
+            let client = app_state.client.clone();
+            async move |cx| authenticate(client, cx).await
+        })
+        .detach_and_log_err(cx);
+""",
+        """        // Eqavo disables automatic upstream account sign-in on startup.
+""",
+    )
+
+    replace_exact(
         zed_rs,
         """        let channels_panel =
             collab_ui::collab_panel::CollabPanel::load(workspace_handle.clone(), cx.clone());
@@ -125,6 +151,62 @@ def main() -> int:
             add_panel_when_ready(notification_panel, workspace_handle.clone(), cx.clone()),
 """,
         """            // Eqavo disables collaboration and notification panels.
+""",
+    )
+
+    replace_exact(
+        title_bar_rs,
+        """                .when(
+                    user.is_none() && TitleBarSettings::get_global(cx).show_sign_in,
+                    |this| this.child(self.render_sign_in_button(cx)),
+                )
+""",
+        "",
+    )
+
+    replace_between(
+        title_bar_rs,
+        "    pub fn render_sign_in_button(&mut self, _: &mut Context<Self>) -> Button {\n",
+        "    pub fn render_user_menu_button(&mut self, cx: &mut Context<Self>) -> impl Element {\n",
+        """    pub fn render_sign_in_button(&mut self, _: &mut Context<Self>) -> Button {
+        Button::new("sign_in_disabled", "已禁用")
+            .label_size(LabelSize::Small)
+            .disabled(true)
+    }
+
+""",
+    )
+
+    replace_between(
+        title_bar_rs,
+        "    pub fn render_user_menu_button(&mut self, cx: &mut Context<Self>) -> impl Element {\n",
+        "            .anchor(Corner::TopRight)\n",
+        """    pub fn render_user_menu_button(&mut self, cx: &mut Context<Self>) -> impl Element {
+        let trigger =
+            ButtonLike::new("user-menu").child(Icon::new(IconName::ChevronDown).size(IconSize::Small));
+
+        PopoverMenu::new("user-menu")
+            .trigger(trigger)
+            .menu(move |window, cx| {
+                ContextMenu::build(window, cx, |menu, _, _cx| {
+                    menu
+                        .action("设置", zed_actions::OpenSettings.boxed_clone())
+                        .action("Keymap", Box::new(zed_actions::OpenKeymap))
+                        .action(
+                            "Themes…",
+                            zed_actions::theme_selector::Toggle::default().boxed_clone(),
+                        )
+                        .action(
+                            "Icon Themes…",
+                            zed_actions::icon_theme_selector::Toggle::default().boxed_clone(),
+                        )
+                        .action(
+                            "扩展",
+                            zed_actions::Extensions::default().boxed_clone(),
+                        )
+                })
+                .into()
+            })
 """,
     )
 

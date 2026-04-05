@@ -32,7 +32,14 @@ fi
 zsh script/generate-licenses
 cargo build --release --package zed --package cli --target "$TARGET_TRIPLE"
 
-APP_PATH="$(cargo bundle --release --target "$TARGET_TRIPLE" --package zed --select-workspace-root | xargs)"
+pushd crates/zed >/dev/null
+cp Cargo.toml Cargo.toml.backup
+sed -i.backup "s/package.metadata.bundle-stable/package.metadata.bundle/" Cargo.toml
+APP_PATH="$(cargo bundle --release --target "$TARGET_TRIPLE" | xargs)"
+mv Cargo.toml.backup Cargo.toml
+rm -f Cargo.toml.backup
+popd >/dev/null
+
 cp "target/$TARGET_TRIPLE/release/cli" "$APP_PATH/Contents/MacOS/cli"
 cp "crates/zed/resources/Document.icns" "$APP_PATH/Contents/Resources/Document.icns"
 python3 "$ROOT/scripts/verify_release_safety.py" "$APP_PATH"
