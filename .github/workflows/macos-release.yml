@@ -57,10 +57,25 @@ jobs:
         shell: bash
         run: ./scripts/bootstrap.sh
 
+      - name: Sync upstream source
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          source .venv/bin/activate
+          python3 scripts/sync_zed.py
+
+      - name: Cache Rust builds
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            .workdir/zed-src
+
       - name: Build package
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          EQAVO_SKIP_SYNC: "1"
         run: bash ./scripts/package_macos.sh ${{ matrix.target }}
 
       - name: Upload DMG artifact
