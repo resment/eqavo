@@ -54,6 +54,10 @@
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=resment/eqavo&type=date&legend=bottom-right" />
  </picture>
 </a>
+
+<iframe style="width:100%;height:auto;min-width:600px;min-height:400px;" src="https://www.star-history.com/?repos=resment%2Feqavo&type=date&legend=top-left" frameBorder="0"></iframe>
+
+
 详细任务见：
 
 - [PROJECT_STATUS.md](./PROJECT_STATUS.md)
