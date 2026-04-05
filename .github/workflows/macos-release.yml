@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: macos-release-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/v') }}
 
 jobs:
   build:
@@ -53,6 +53,11 @@ jobs:
       - name: Ensure Metal toolchain
         shell: bash
         run: |
+          latest_xcode="$(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' | sort -V | tail -n 1)"
+          if [[ -n "$latest_xcode" ]]; then
+            sudo xcode-select -s "$latest_xcode/Contents/Developer"
+            xcodebuild -version
+          fi
           if ! xcrun -f metal >/dev/null 2>&1; then
             xcodebuild -downloadComponent MetalToolchain
           fi
