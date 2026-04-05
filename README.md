@@ -64,7 +64,13 @@
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=resment/eqavo&type=Date)](https://www.star-history.com/#resment/eqavo&Date)
+<a href="https://www.star-history.com/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=resment/eqavo&type=date&theme=dark&legend=top-left" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=resment/eqavo&type=date&legend=top-left" />
+    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=resment/eqavo&type=date&legend=top-left" />
+  </picture>
+</a>
 
 详细任务见：
 
