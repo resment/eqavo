@@ -2,15 +2,16 @@ name: macOS Release
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
-  release:
-    types:
-      - published
 
 permissions:
   contents: write
+
+concurrency:
+  group: macos-release-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -30,6 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,21 +41,47 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust builds
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            .workdir/zed-src
+
+      - name: Ensure Metal toolchain
+        shell: bash
+        run: |
+          if ! xcrun -f metal >/dev/null 2>&1; then
+            xcodebuild -downloadComponent MetalToolchain
+          fi
 
       - name: Bootstrap
+        shell: bash
         run: ./scripts/bootstrap.sh
 
       - name: Build package
-        run: ./scripts/package_macos.sh ${{ matrix.target }}
+        shell: bash
+        run: bash ./scripts/package_macos.sh ${{ matrix.target }}
 
-      - name: Upload artifact
+      - name: Upload DMG artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: .workdir/zed-src/target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
+          if-no-files-found: error
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Eqavo-${{ matrix.target }}.app
+          path: .workdir/zed-src/target/${{ matrix.target }}/release/bundle/osx/Eqavo.app
+          if-no-files-found: error
 
       - name: Publish release asset
-        if: github.event_name == 'release'
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          generate_release_notes: true
           files: .workdir/zed-src/target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
