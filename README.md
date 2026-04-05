@@ -47,15 +47,9 @@
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=resment%2Feqavo&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=resment/eqavo&type=date&theme=dark&legend=bottom-right" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=resment/eqavo&type=date&legend=bottom-right" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=resment/eqavo&type=date&legend=bottom-right" />
- </picture>
-</a>
+## Star History
 
-<iframe style="width:100%;height:auto;min-width:600px;min-height:400px;" src="https://www.star-history.com/?repos=resment%2Feqavo&type=date&legend=top-left" frameBorder="0"></iframe>
+[![Star History Chart](https://api.star-history.com/chart?repos=resment/eqavo&type=date&legend=top-left)](https://www.star-history.com/?repos=resment%2Feqavo&type=date&legend=top-left)
 
 
 详细任务见：
