@@ -29,6 +29,7 @@ Build an unofficial, macOS-first, Chinese-localized editor distribution based on
 - Added first-pass logo and app icon SVG assets
 - Added generated macOS iconset and `.icns` assets
 - Added initial service-stripping script
+- Added agent environment patching to preserve user-provided Claude/Bedrock/Vertex credentials
 - Added branding application script for bundle metadata and icons
 - Added local build script that chains sync, translation, service stripping, and cargo build
 - Added GitHub Actions workflow scaffold for macOS release builds
