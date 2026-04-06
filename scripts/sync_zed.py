@@ -11,15 +11,22 @@ SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 from zed_cn_macos.config import load_paths
-from zed_cn_macos.zed_sync import download_source, fetch_latest_release, unpack_source
+from zed_cn_macos.zed_sync import download_source, fetch_latest_release, fetch_release_by_tag, unpack_source
+
+
+def resolve_release(paths) -> dict:
+    pinned_tag = paths.zed_version_file.read_text().strip()
+    if pinned_tag:
+        return fetch_release_by_tag(pinned_tag)
+    return fetch_latest_release()
 
 
 def main() -> int:
     paths = load_paths(ROOT)
-    release = fetch_latest_release()
+    release = resolve_release(paths)
     version = release["name"]
 
-    print(f"Latest Zed release: {version}")
+    print(f"Resolved Zed release: {version}")
     print(f"Downloading source to: {paths.source_zip}")
     download_source(release["zipball_url"], paths.source_zip)
 

@@ -12,6 +12,7 @@ class Paths:
     source_dir: Path
     translations_file: Path
     glossary_file: Path
+    zed_version_file: Path
 
 
 def load_paths(repo_root: Path | None = None) -> Paths:
@@ -24,4 +25,5 @@ def load_paths(repo_root: Path | None = None) -> Paths:
         source_dir=workdir / "zed-src",
         translations_file=root / "translations" / "strings_zh_CN.json",
         glossary_file=root / "translations" / "glossary_zh_CN.json",
+        zed_version_file=root / "zed-version.txt",
     )

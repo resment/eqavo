@@ -36,6 +36,16 @@ def fetch_latest_release() -> dict:
     return stable[0]
 
 
+def fetch_release_by_tag(tag: str) -> dict:
+    response = requests.get(
+        f"https://api.github.com/repos/{REPO}/releases/tags/{tag}",
+        timeout=30,
+        headers=github_headers(),
+    )
+    response.raise_for_status()
+    return response.json()
+
+
 def download_source(zip_url: str, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     with requests.get(zip_url, timeout=60, stream=True, headers=github_headers()) as response:

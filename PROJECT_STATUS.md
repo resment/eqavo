@@ -34,6 +34,7 @@ Build an unofficial, macOS-first, Chinese-localized editor distribution based on
 - Added branding application script for bundle metadata and icons
 - Added local build script that chains sync, translation, service stripping, and cargo build
 - Added GitHub Actions workflow scaffold for macOS release builds
+- Pinned upstream Zed version for reproducible CI and local builds
 
 ## In progress
 
