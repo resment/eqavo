@@ -338,13 +338,7 @@ def main() -> int:
         """impl RenderOnce for AiUpsellCard {
     fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
         v_flex()
-            .max_w_96()
             .gap_2()
-            .rounded_xl()
-            .border_1()
-            .border_color(ui::DividerColor::default())
-            .bg(ui::Fill::surface_background())
-            .p_4()
             .child(Label::new("Use Your Own AI Provider").size(LabelSize::Large))
             .child(
                 Label::new(
