@@ -56,7 +56,7 @@ DMG_PATH="$DMG_TARGET_DIR/Eqavo-$ARCH_SUFFIX.dmg"
 
 rm -rf "$DMG_SOURCE_DIR"
 mkdir -p "$DMG_SOURCE_DIR"
-mv "$APP_PATH" "$DMG_SOURCE_DIR"
+cp -R "$APP_PATH" "$DMG_SOURCE_DIR/"
 ln -s /Applications "$DMG_SOURCE_DIR/Applications"
 
 hdiutil create -volname Eqavo -srcfolder "$DMG_SOURCE_DIR" -ov -format UDZO "$DMG_PATH"
