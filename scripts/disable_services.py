@@ -45,6 +45,8 @@ def main() -> int:
     agent_panel_onboarding_rs = (
         paths.source_dir / "crates" / "ai_onboarding" / "src" / "agent_panel_onboarding_content.rs"
     )
+    ai_onboarding_rs = paths.source_dir / "crates" / "ai_onboarding" / "src" / "ai_onboarding.rs"
+    ai_upsell_card_rs = paths.source_dir / "crates" / "ai_onboarding" / "src" / "ai_upsell_card.rs"
     edit_prediction_onboarding_rs = (
         paths.source_dir / "crates" / "ai_onboarding" / "src" / "edit_prediction_onboarding_content.rs"
     )
@@ -52,11 +54,17 @@ def main() -> int:
     thread_view_rs = (
         paths.source_dir / "crates" / "agent_ui" / "src" / "conversation_view" / "thread_view.rs"
     )
+    end_trial_upsell_rs = (
+        paths.source_dir / "crates" / "agent_ui" / "src" / "ui" / "end_trial_upsell.rs"
+    )
     text_thread_editor_rs = (
         paths.source_dir / "crates" / "agent_ui" / "src" / "text_thread_editor.rs"
     )
     edit_prediction_button_rs = (
         paths.source_dir / "crates" / "edit_prediction_ui" / "src" / "edit_prediction_button.rs"
+    )
+    cloud_provider_rs = (
+        paths.source_dir / "crates" / "language_models" / "src" / "provider" / "cloud.rs"
     )
     edit_prediction_registry_rs = (
         paths.source_dir / "crates" / "zed" / "src" / "zed" / "edit_prediction_registry.rs"
@@ -299,6 +307,57 @@ def main() -> int:
 """,
     )
 
+    replace_between(
+        ai_onboarding_rs,
+        "impl RenderOnce for ZedAiOnboarding {\n",
+        "impl Component for ZedAiOnboarding {\n",
+        """impl RenderOnce for ZedAiOnboarding {
+    fn render(self, _window: &mut ui::Window, _cx: &mut App) -> impl IntoElement {
+        v_flex()
+            .relative()
+            .gap_1()
+            .child(Headline::new("Use Your Own AI Provider"))
+            .child(
+                Label::new(
+                    "Eqavo does not include Zed AI, trials, or hosted model access. Configure your own provider credentials instead.",
+                )
+                .color(Color::Muted)
+                .mb_2(),
+            )
+            .children(self.render_dismiss_button())
+    }
+}
+
+""",
+    )
+
+    replace_between(
+        ai_upsell_card_rs,
+        "impl RenderOnce for AiUpsellCard {\n",
+        "impl Component for AiUpsellCard {\n",
+        """impl RenderOnce for AiUpsellCard {
+    fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
+        v_flex()
+            .max_w_96()
+            .gap_2()
+            .rounded_xl()
+            .border_1()
+            .border_color(ui::DividerColor::default())
+            .bg(ui::Fill::surface_background())
+            .p_4()
+            .child(Label::new("Use Your Own AI Provider").size(LabelSize::Large))
+            .child(
+                Label::new(
+                    "Eqavo does not include Zed AI, Zed Pro, or hosted-model sign-in flows. Configure your own provider credentials in settings instead.",
+                )
+                .color(Color::Muted),
+            )
+    }
+}
+
+""",
+    )
+
     replace_exact(
         edit_prediction_onboarding_rs,
         """use client::{Client, UserStore};
@@ -409,6 +468,12 @@ use ui::prelude::*;
 """,
     )
 
+    replace_exact(
+        thread_view_rs,
+        '"You reached your free usage limit. Upgrade to Zed Pro for more prompts."\n',
+        '"Eqavo does not include Zed AI billing. Choose another provider to continue."\n',
+    )
+
     replace_between(
         agent_panel_rs,
         "        let zed_provider_configured = AgentSettings::get_global(cx)\n",
@@ -464,6 +529,40 @@ use ui::prelude::*;
     )
 
     replace_between(
+        end_trial_upsell_rs,
+        "impl RenderOnce for EndTrialUpsell {\n",
+        "impl Component for EndTrialUpsell {\n",
+        """impl RenderOnce for EndTrialUpsell {
+    fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
+        AgentPanelOnboardingCard::new()
+            .child(Headline::new("Use Your Own AI Provider"))
+            .child(
+                Label::new(
+                    "Eqavo does not include Zed Pro trials or subscription upsells. Configure another provider to continue.",
+                )
+                .color(Color::Muted)
+                .mb_2(),
+            )
+            .child(
+                h_flex().absolute().top_4().right_4().child(
+                    IconButton::new("dismiss_onboarding", IconName::Close)
+                        .icon_size(IconSize::Small)
+                        .tooltip(Tooltip::text("Dismiss"))
+                        .on_click({
+                            let callback = self.dismiss_upsell.clone();
+                            move |_, window, cx| {
+                                callback(window, cx)
+                            }
+                        }),
+                ),
+            )
+    }
+}
+
+""",
+    )
+
+    replace_between(
         thread_view_rs,
         "    fn render_payment_required_error(&self, cx: &mut Context<Self>) -> Callout {\n",
         "    fn authenticate_button(&self, cx: &mut Context<Self>) -> impl IntoElement {\n",
@@ -485,6 +584,27 @@ use ui::prelude::*;
             .label_size(LabelSize::Small)
             .disabled(true)
     }
+
+""",
+    )
+
+    replace_between(
+        cloud_provider_rs,
+        "impl RenderOnce for ZedAiConfiguration {\n",
+        "struct ConfigurationView {\n",
+        """impl RenderOnce for ZedAiConfiguration {
+    fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
+        v_flex()
+            .gap_2()
+            .w_full()
+            .child(
+                Label::new(
+                    "Eqavo does not expose Zed-hosted models, trials, or subscription management. Use your own provider credentials instead.",
+                )
+                .color(Color::Muted),
+            )
+    }
+}
 
 """,
     )

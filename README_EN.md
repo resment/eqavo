@@ -42,6 +42,7 @@ Ideal user flow:
 - Name: `Eqavo`
 - Type: unofficial community project
 - Platform: macOS first
+- Upstream baseline: `Zed v0.230.1`
 - Language: Chinese first, English second
 - Pricing: free
 - Repo model: independently maintained
@@ -92,6 +93,10 @@ Eqavo takes a different path:
 3. strip unnecessary upstream service-connected entry points
 4. build macOS distributable artifacts
 5. publish them under an independent brand
+
+The currently pinned upstream version is tracked in:
+
+- [zed-version.txt](./zed-version.txt)
 
 ## Repository layout
 
