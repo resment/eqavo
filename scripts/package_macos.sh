@@ -55,18 +55,19 @@ tell application "Finder"
       set statusbar visible to false
       set bounds to {120, 120, 980, 660}
       set theViewOptions to the icon view options
-      set arrangement of theViewOptions to not arranged
       set icon size of theViewOptions to 144
       set text size of theViewOptions to 16
-      set background picture of theViewOptions to file ".background:dmg-background.png"
+      try
+        set background picture of theViewOptions to file ".background:dmg-background.png"
+      end try
     end tell
-    set position of item "Eqavo.app" of container window to {220, 270}
-    set position of item "Applications" of container window to {620, 270}
+    try
+      set position of item "Eqavo.app" of container window to {220, 270}
+      set position of item "Applications" of container window to {620, 270}
+    end try
     update without registering applications
     delay 2
     close
-    open
-    delay 1
   end tell
 end tell
 EOF
@@ -146,7 +147,17 @@ if command -v osascript >/dev/null 2>&1; then
 fi
 
 sync
-hdiutil detach "$DMG_DEVICE"
+for attempt in 1 2 3; do
+  if hdiutil detach "$DMG_DEVICE"; then
+    break
+  fi
+  sleep 2
+done
+
+if diskutil info "$DMG_DEVICE" >/dev/null 2>&1; then
+  hdiutil detach -force "$DMG_DEVICE"
+fi
+
 hdiutil convert "$DMG_RW_PATH" -ov -format UDZO -imagekey zlib-level=9 -o "$DMG_PATH"
 sign_file "$DMG_PATH"
 notarize_if_configured "$DMG_PATH"
