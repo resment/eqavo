@@ -47,6 +47,19 @@ Ideal user flow:
 - Pricing: free
 - Repo model: independently maintained
 
+## Installation notes
+
+- Releases now produce both `.app` and `.dmg` artifacts automatically
+- Builds are signed locally by default; if Apple Developer signing and notarization secrets are configured, CI can notarize the final release
+- If macOS says the app is "damaged", that usually means the build was not notarized and Gatekeeper blocked it. It does not necessarily mean the bundle contents are corrupted.
+- Temporary workaround:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Eqavo.app
+```
+
+- Proper long-term fix: configure Apple Developer signing and notarization secrets in GitHub Actions
+
 ## Growth snapshot
 
 We use live GitHub metrics instead of hardcoded numbers:

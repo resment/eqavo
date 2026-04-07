@@ -46,6 +46,19 @@
 - 收费：免费
 - 仓库：独立维护
 
+## 安装说明
+
+- 当前 release 已支持自动生成 `.app` 和 `.dmg`
+- 产物默认会做本地签名；如果仓库配置了 Apple Developer 证书和 notarization secrets，CI 会继续做官方 notarization
+- 如果某个 release 仍然出现“已损坏，无法打开”，这通常是该构建没有完成 notarization，被 Gatekeeper 拦截，不是文件内容本身损坏
+- 临时绕过方式：
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Eqavo.app
+```
+
+- 长期正确做法：在 GitHub Actions 里配置 Apple Developer 签名与 notarization secrets
+
 ## Star History
 
 <a href="https://www.star-history.com/?repos=resment%2Feqavo&type=date&legend=top-left">

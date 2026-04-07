@@ -80,6 +80,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           EQAVO_SKIP_SYNC: "1"
+          APPLE_DEVELOPER_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
+          APPLE_IDENTITY_TEAM_ID: ${{ secrets.APPLE_IDENTITY_TEAM_ID }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         run: bash ./scripts/package_macos.sh ${{ matrix.target }}
 
       - name: Upload DMG artifact

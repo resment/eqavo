@@ -18,11 +18,12 @@ ICNS_PATH = BRAND_DIR / "Eqavo.icns"
 
 
 def render_master_png() -> Path:
-    if MASTER_PNG_PATH.exists():
-        return MASTER_PNG_PATH
-
     RENDER_DIR.mkdir(parents=True, exist_ok=True)
     temp_output = RENDER_DIR / "eqavo-icon.svg.png"
+    if temp_output.exists():
+        temp_output.unlink()
+    if MASTER_PNG_PATH.exists():
+        MASTER_PNG_PATH.unlink()
 
     subprocess.run(
         [
